@@ -1,11 +1,16 @@
 package com.panter.panterapp.util;
 
 import android.app.Application;
-import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+
+/*
+* Class used to initialize the configuration needed to use the Volley library that handles
+* the Json requests.
+*
+* */
 
 public class AppController extends Application {
 
@@ -33,19 +38,8 @@ public class AppController extends Application {
         return mRequestQueue;
     }
 
-    public <T> void addToRequestQueue(Request<T> req, String tag) {
-        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-        getRequestQueue().add(req);
-    }
-
     public <T> void addToRequestQueue(Request<T> req) {
         req.setTag(TAG);
         getRequestQueue().add(req);
-    }
-
-    public void cancelPendingRequests(Object tag) {
-        if (mRequestQueue != null) {
-            mRequestQueue.cancelAll(tag);
-        }
     }
 }

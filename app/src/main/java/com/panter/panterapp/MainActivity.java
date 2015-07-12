@@ -5,14 +5,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.SpinnerAdapter;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -30,11 +28,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/*
+* Main Activity for the app used to display the main interface of the application and manages
+* the functions that reads and shows the menu items from the json web service.
+* */
 
 public class MainActivity extends ActionBarActivity implements ActionBar.OnNavigationListener {
 
+    // Variable used to handle the custom adapter created to populate the action bar dropdown.
     private MenuObjectAdapter menuArrayAdapter;
 
+    // ArrayList used to store the items the app reads from the json in the web.
     private ArrayList<MenuObject> menuObjects;
 
     // Progress dialog
@@ -51,10 +55,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Progress dialog that shows when the app is loading the Json via web.
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Please wait...");
         pDialog.setCancelable(false);
 
+        // Here we make the json request that will get the information needed to populate
+        // the action bar items.
         makeJsonRequest();
 
         // Set up the action bar to show a dropdown list.
@@ -62,6 +69,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
+        // This is a placeholder item created to avoid that the app crashes when loads
+        // with an empty dropdown in  the action bar.
         MenuObject placeMenu = new MenuObject();
         placeMenu.setName("Empty");
         placeMenu.setMenuID("");
@@ -70,6 +79,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 
         menuObjects = new ArrayList<>();
 
+        // Here we add the placeholder item to the ArrayList menuObjects.
         menuObjects.add(placeMenu);
 
         // Specify a ArrayAdapter to populate the dropdown list.
@@ -86,12 +96,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
     }
 
     /**
-     * Method to make json request
+     * Method used to make json requests.
      * */
     private void makeJsonRequest() {
 
         showPDialog();
 
+        // Creating the request that will be used to get the info from the Json in the web.
         JsonArrayRequest request = new JsonArrayRequest(AppConstants.URL,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -103,6 +114,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
                             // loops through each json object
 
                             MenuObject menuObject = new MenuObject();
+
+                            menuArrayAdapter.clear();
                             menuObjects.clear();
 
                             for (int i = 0; i < response.length(); i++) {
@@ -120,24 +133,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
                                 menuObject.setIconURL(iconURL);
                                 menuObject.setLinkURL(linkURL);
 
+                                // Adds the menu item to the ArrayList that will store the
+                                // menu items.
                                 menuObjects.add(menuObject);
 
-                                Log.d(AppConstants.TAG, "MenuObject: " + menuObject.getMenuID() + menuObject.getName());
-                                Log.d(AppConstants.TAG, "MenuObject: " +  menuObject.getMenuID() + menuObjects.get(i).getName());
-
-                            }System.out.println("Prueba " + menuObjects.size());
-
-                            menuArrayAdapter.clear();
-
-                            for (int i = 0; i < menuObjects.size(); i++) {
-
                                 menuArrayAdapter.add(menuObjects.get(i));
+
+                                // Notifies that the data have changed in the adapter so it
+                                // will be displayed.
                                 menuArrayAdapter.notifyDataSetChanged();
 
                             }
-
-                            // Set up the dropdown list navigation in the action bar.
-                            getSupportActionBar().setListNavigationCallbacks(menuArrayAdapter, MainActivity.this);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -162,11 +168,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
         AppController.getInstance().addToRequestQueue(request);
     }
 
+    // Function used to show the progress dialog that shows when the app is loading the Json via web.
     private void showPDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
     }
 
+    // Function used to hide the progress dialog that shows when the app is loading the Json via web.
     private void hidePDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
@@ -216,9 +224,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
     public boolean onNavigationItemSelected(int position, long id) {
         // When the given dropdown item is selected, show its contents in the
         // container view.
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+//                .commit();
+//
+
+        // Handle the clicking in the dropdrown items to display the webpage.
+        WebView webView = (WebView) findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl(menuObjects.get(position).getLinkURL());
+
         return true;
     }
 

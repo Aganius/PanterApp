@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.panter.panterapp.R;
@@ -35,8 +34,7 @@ public class MenuObjectAdapter extends ArrayAdapter<MenuObject> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
+    public View getView(int position, View row, ViewGroup parent) {
         MenuObjectHolder holder = null;
 
         if(row == null)
@@ -45,7 +43,7 @@ public class MenuObjectAdapter extends ArrayAdapter<MenuObject> {
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new MenuObjectHolder();
-            // holder.imgIcon = (ImageView)row.findViewById(R.id.imgIcon);
+//            holder.imgIcon = (ImageView)row.findViewById(R.id.imgIcon);
             holder.txtName = (TextView)row.findViewById(R.id.txtName);
 
             row.setTag(holder);
@@ -54,10 +52,9 @@ public class MenuObjectAdapter extends ArrayAdapter<MenuObject> {
         {
             holder = (MenuObjectHolder)row.getTag();
         }
-
         holder.txtName.setText(data.get(position).getName());
 
-        // holder.imgIcon.setImageBitmap(getBitmapFromURL(data.get(position).getIconURL()));
+//        holder.imgIcon.setImageBitmap(getBitmapFromURL(data.get(position).getIconURL()));
 
         return row;
     }

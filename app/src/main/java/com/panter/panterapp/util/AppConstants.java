@@ -1,5 +1,10 @@
 package com.panter.panterapp.util;
 
+/*
+* Interface used to store the constants or configurations that the app has.
+*
+* */
+
 public interface AppConstants {
 
     // Web service URL that contains the menu info.
