@@ -100,7 +100,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.OnNavig
 
                         try {
                             // Parsing json array response
-                            // loop through each json object
+                            // loops through each json object
 
                             MenuObject menuObject = new MenuObject();
                             menuObjects.clear();
